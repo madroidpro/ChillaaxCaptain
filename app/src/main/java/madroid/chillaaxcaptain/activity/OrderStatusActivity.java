@@ -207,7 +207,7 @@ public class OrderStatusActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor=getSharedPreferences(sd.Flaglists,MODE_PRIVATE).edit();
                         editor.putInt("showOrderStatus",0);
                         editor.commit();
-                        openDialogNoOrder();
+                        //openDialogNoOrder();
                     }
 
 

@@ -1,6 +1,7 @@
 package madroid.chillaaxcaptain.rest;
 
 
+import java.sql.DataTruncation;
 import java.util.List;
 
 import madroid.chillaaxcaptain.model.Brand;
@@ -33,6 +34,12 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("stw_login")
     Call<OpenTables>login(@Field("username")String username,@Field("password")String password);
+
+    @FormUrlEncoded
+    @POST("stw_getPendingOrders")
+    Call<OpenTables>getOngoingOrder(@Field("type")String type, @Field("r_id")String restaurant_id);
+
+    //Captain app End
 
     @FormUrlEncoded
     @POST("getItems")

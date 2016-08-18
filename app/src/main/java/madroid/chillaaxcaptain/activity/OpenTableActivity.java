@@ -16,6 +16,7 @@ import java.util.List;
 
 import madroid.chillaaxcaptain.R;
 import madroid.chillaaxcaptain.adapter.TableGridAdaptor;
+import madroid.chillaaxcaptain.fragments.OngoingOrdersFragment;
 import madroid.chillaaxcaptain.fragments.ShowTablesFragment;
 import madroid.chillaaxcaptain.fragments.StartersFragment;
 import madroid.chillaaxcaptain.helpers.SharedData;
@@ -46,7 +47,7 @@ public class OpenTableActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager){
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ShowTablesFragment(), "Place Order");
-        adapter.addFragment(new ShowTablesFragment(), "Ongoing Orders");
+        adapter.addFragment(new OngoingOrdersFragment(), "Ongoing Orders");
         viewPager.setAdapter(adapter);
         //Add this to show default viewable fragment
         //viewPager.setCurrentItem(gridMenuType-1);

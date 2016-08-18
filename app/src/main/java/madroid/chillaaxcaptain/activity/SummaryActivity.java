@@ -142,7 +142,7 @@ public class SummaryActivity extends AppCompatActivity {
                     pDialog.setCancelable(false);
                     pDialog.show();
                    // Log.d("infopost",baseCost+"-"+"-"+serviceTax+""+totalCost+"-"+VAT);
-                    Call<PlaceOrder>call = apiInterface.placeOrder("1",baseCost+"",totalCost+"",Math.floor(serviceTax)+"",Math.floor(serviceCharge)+"",Math.floor(VAT)+"",Math.floor(krishiKalyanTax)+"",Math.floor(swatchBharathTax)+"",android.text.TextUtils.join(",", itemIdsList),android.text.TextUtils.join(",", quantitiesList),android.text.TextUtils.join(",",itemPriceList),"");
+                    Call<PlaceOrder>call = apiInterface.placeOrder(RestaurantTableId,baseCost+"",totalCost+"",Math.floor(serviceTax)+"",Math.floor(serviceCharge)+"",Math.floor(VAT)+"",Math.floor(krishiKalyanTax)+"",Math.floor(swatchBharathTax)+"",android.text.TextUtils.join(",", itemIdsList),android.text.TextUtils.join(",", quantitiesList),android.text.TextUtils.join(",",itemPriceList),"");
                     call.enqueue(new Callback<PlaceOrder>() {
                         @Override
                         public void onResponse(Call<PlaceOrder> call, Response<PlaceOrder> response) {
