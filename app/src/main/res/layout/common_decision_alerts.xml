@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:paddingTop="5sp"
+    android:background="@color/colorAccent">
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minLines="2"
+    android:textColor="@color/black"
+    android:textSize="@dimen/title_text_small"
+    android:id="@+id/commonDecisionMsg"
+    android:paddingLeft="5sp"
+    android:paddingRight="5sp"
+    android:gravity="center"
+    android:text="hello i'm a Decision"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/commonDecisionMsg"
+        android:paddingBottom="10sp"
+        android:weightSum="1">
+        <Button
+            android:layout_width="0sp"
+            android:layout_weight="0.5"
+            android:padding="3sp"
+            android:layout_height="wrap_content"
+            android:text="YES"
+            android:layout_marginTop="15sp"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="7sp"
+            android:textSize="@dimen/title_text_extra_small"
+            android:textColor="@color/colorAccent"
+            android:background="@drawable/button_style"
+            android:id="@+id/commonDecisionYes"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:text="NO"
+            android:layout_marginTop="15sp"
+            android:layout_marginLeft="7sp"
+            android:layout_marginRight="15sp"
+            android:textSize="@dimen/title_text_extra_small"
+            android:textColor="@color/colorAccent"
+            android:background="@drawable/button_style"
+            android:id="@+id/commonDecisionNo"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

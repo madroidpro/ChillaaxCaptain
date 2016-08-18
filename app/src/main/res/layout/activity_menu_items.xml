@@ -1,0 +1,77 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinatorlayout"
+    android:fitsSystemWindows="true">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:weightSum="10">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:textSize="@dimen/title_text_extra_small"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:text=""
+            android:id="@+id/menuRestaurantName"
+            android:textColor="@color/colorAccent"/>
+    </LinearLayout>
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            app:tabIndicatorColor="@color/colorAccent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            app:tabGravity="fill"
+            android:layout_gravity="bottom"
+            app:tabMode="scrollable"
+            android:fillViewport="false" />
+    </android.support.design.widget.AppBarLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:background="@color/colorAccent"
+        android:fillViewport="false"
+        android:nestedScrollingEnabled="false" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:paddingBottom="5dp"
+        android:layout_gravity="center">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="45dp"
+            android:text="Submit Selection"
+            android:textSize="15dp"
+            android:visibility="gone"
+            android:id="@+id/submitSelectionButton"
+            android:textAllCaps="false"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/colorAccent"/>
+    </LinearLayout>
+
+
+</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

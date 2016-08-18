@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="3"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".activity.ScanActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.7"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary">
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="15dp"
+          android:scaleType="fitCenter"
+          android:src="@drawable/chillaaxlogo"/>
+        </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1.8"
+    android:orientation="vertical"
+    android:weightSum="1">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:text="WELCOME"
+        android:textSize="@dimen/header_text"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/colorAccent"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+    <HorizontalScrollView
+        android:id="@+id/horizontal_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.7"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.5"
+                        android:src="@drawable/introart_1"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.4"
+                        android:lineSpacingExtra="5dp"
+                        android:textSize="@dimen/scroll_text_size"
+                        android:text="@string/inart_1_msg"
+                        android:textColor="@color/colorAccent"
+                        android:layout_marginTop="15dp"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="bottom"/>
+
+        </LinearLayout>
+
+
+    </HorizontalScrollView>
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.6"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_gravity="center">
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="@dimen/title_text_extra_small"
+        android:layout_alignParentBottom="true"
+        android:text="Scan QR Code to Order Now"
+        android:textAllCaps="false"
+        android:id="@+id/QRScanButton"
+        />
+    </LinearLayout>
+</LinearLayout>

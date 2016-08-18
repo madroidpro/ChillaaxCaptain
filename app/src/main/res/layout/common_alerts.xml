@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="5dp"
+    android:background="@color/colorAccent">
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minLines="4"
+    android:textColor="@color/black"
+    android:textSize="@dimen/title_text_extra_small"
+    android:id="@+id/commonDialogMsg"
+    android:gravity="center"
+    android:text="hello i'm a dialag"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/commonDialogMsg"
+        android:text="OK"
+        android:textSize="@dimen/title_text_small"
+        android:layout_margin="10sp"
+        android:textColor="@color/colorAccent"
+        android:background="@drawable/button_style"
+        android:id="@+id/commonDialogClose"/>
+</RelativeLayout>

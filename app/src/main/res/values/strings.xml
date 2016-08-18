@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Captain</string>
+    <string name="inart_1_msg">Witness the revolutionary way of ordering food at your favorite location</string>
+    <string name="inart_2_msg">Get assured gift of flat discounts on your bill when you make payment through online!</string>
+    <string name="inart_3_msg">100% safe and secured in-app payment transactions through your favorite wallet!</string>
+    <string name="rs">₹</string>
+
+    <string name="requestBill">1</string>
+    <string name="cancelBill">2</string>
+    <string name="callWaiter">3</string>
+
+    <string name="cancelPay">0</string>
+    <string name="cashPay">1</string>
+    <string name="cardPay">2</string>
+
+    <string name="alertMsgFeedback">We appreciate your effort of providing your valuable feedback by which we can serve you better in the future. Thanks for dining with us,we would love to have you back!</string>
+    <string name="orderPlacedPopup">Order has been placed successfully! To add more items/track order status/ request for bill please go to dashboard. </string>
+    <string name="tableBusy">Sorry, Currently the table is reserved, Please try another table or try again later. Thank you</string>
+    <string name="errorMsg">Sorry, Please connect to Internet</string>
+    <string name="decisionMsg">Are you sure you want to remove the item?</string>
+    <string name="noOrderFound">Sorry, No orders found! please order something and check back. Thank you.</string>
+</resources>

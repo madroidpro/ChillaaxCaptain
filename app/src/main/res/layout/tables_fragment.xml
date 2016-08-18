@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="10"
+    android:layout_marginLeft="10sp"
+    android:layout_marginRight="10sp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:textSize="@dimen/title_text_extra_small"
+        android:text=""
+        android:layout_marginLeft="10sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginRight="10sp"
+        android:textColor="@color/black"
+        android:background="@drawable/square_background"
+        android:id="@+id/restaurantNameFragment"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:layout_marginBottom="5sp"
+        android:textSize="@dimen/title_text_small"
+        android:text="SELECT TABLE TO ORDER"
+        android:textColor="@color/black"
+        android:textStyle="bold"/>
+    <GridView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:minHeight="500dp"
+        android:background="@color/colorAccent"
+        android:id="@+id/tableGrid"
+        android:numColumns="auto_fit"
+        android:columnWidth="150sp"
+        android:visibility="visible"
+        android:gravity="center"/>
+</LinearLayout>
