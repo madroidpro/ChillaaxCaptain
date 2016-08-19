@@ -1,10 +1,12 @@
 package madroid.chillaaxcaptain.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.system.Os;
@@ -34,7 +36,9 @@ public class OngoingOrdersFragment extends Fragment {
     SharedData sd = SharedData.getSingletonObject();
     ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
     String oStatus="";
+    private ProgressDialog pDialog;
     public static String RestaurantId,RestaurantName;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public OngoingOrdersFragment() {
     }
 
@@ -50,17 +54,31 @@ public class OngoingOrdersFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.ongoing_order_fragment,null);
+      final  View view=inflater.inflate(R.layout.ongoing_order_fragment,null);
         getOngoingOrders(view);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeViewLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // onRefresh action here
+                swipeRefreshLayout.setRefreshing(true);
+                getOngoingOrders(view);
+            }
+        });
         return view;
     }
 
     private void getOngoingOrders(final View view){
+        pDialog=new ProgressDialog(ctx);
+        pDialog.setMessage("Please wait..");
+        pDialog.setCancelable(false);
+        pDialog.show();
         Call<OpenTables>call = apiInterface.getOngoingOrder("1",RestaurantId);
         call.enqueue(new Callback<OpenTables>() {
             @Override
             public void onResponse(Call<OpenTables> call, Response<OpenTables> response) {
-                Log.d("info_ongoing",response.body().getTables().get(0).getRestaurantOrder().get(0).getId());
+                pDialog.cancel();
+               // Log.d("info_ongoing",response.body().getTables().get(0).getRestaurantOrder().get(0).getId());
 
                 int Tsize=response.body().getTables().size();
                 List<OngoingOrderItem>ongoingOrderItemsList=new ArrayList<OngoingOrderItem>();
@@ -75,6 +93,9 @@ public class OngoingOrdersFragment extends Fragment {
                                 break;
                             case "q":
                                  oStatus="ORDER PROCESSING";
+                                break;
+                            case "p":
+                                oStatus="ORDER COMPLETED";
                                 break;
                             default:
                                 oStatus ="ORDER PLACED";
@@ -94,14 +115,17 @@ public class OngoingOrdersFragment extends Fragment {
                 }
 
                 OngoingOrderItemListAdapter listAdapter=new OngoingOrderItemListAdapter(ctx,ongoingOrderItemsList);
+                listAdapter.notifyDataSetChanged();
                 RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.ongoingFragmentRecyclerView);
                 recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
+                recyclerView.setNestedScrollingEnabled(false);
                 recyclerView.setAdapter(listAdapter);
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(Call<OpenTables> call, Throwable t) {
-
+                pDialog.cancel();
             }
         });
     }

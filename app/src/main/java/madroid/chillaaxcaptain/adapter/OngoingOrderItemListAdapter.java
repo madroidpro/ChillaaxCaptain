@@ -81,16 +81,33 @@ public class OngoingOrderItemListAdapter extends RecyclerView.Adapter<RecyclerVi
             }
         });
 
+        vh.ongoingViewLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor=ctx.getSharedPreferences(sd.Flaglists,ctx.MODE_PRIVATE).edit();
+                editor.putString("RestaurantTableId",ongoingOrderItem.tableId);
+                editor.putString("RestaurantTableDisplayName",ongoingOrderItem.tableNo);
+                editor.commit();
+                Intent intent=new Intent(ctx, OrderStatusActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(intent);
+            }
+        });
+
         vh.ongoingCardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 raiseRequest(ongoingOrderItem.tableId,ctx.getResources().getString(R.string.requestBill),ctx.getResources().getString(R.string.cardPay));
+                vh.cashcardlayout.setVisibility(View.GONE);
+                vh.OrderBillRequested.setVisibility(View.VISIBLE);
             }
         });
         vh.ongoingCashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 raiseRequest(ongoingOrderItem.tableId,ctx.getResources().getString(R.string.requestBill),ctx.getResources().getString(R.string.cashPay));
+                vh.cashcardlayout.setVisibility(View.GONE);
+                vh.OrderBillRequested.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -101,14 +118,15 @@ public class OngoingOrderItemListAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder{
-        TextView ongoingOrderStatus,ongoingTableNumber,ongoingOrderId;
+        TextView ongoingOrderStatus,ongoingTableNumber,ongoingOrderId,OrderBillRequested;
         Button ongoingRequestButton,ongoingEditButton,ongoingCashButton,ongoingCardButton,ongoingCancelButton;
-        View cashcardlayout,addEditLayout;
+        View cashcardlayout,addEditLayout,ongoingViewLayout;
         public ItemViewHolder(View itemView) {
             super(itemView);
             this.ongoingOrderStatus=(TextView)itemView.findViewById(R.id.ongoingOrderStatus);
             this.ongoingTableNumber=(TextView)itemView.findViewById(R.id.ongoingTableNumber);
             this.ongoingOrderId=(TextView)itemView.findViewById(R.id.ongoingOrderId);
+            this.OrderBillRequested=(TextView)itemView.findViewById(R.id.OrderBillRequested);
             this.ongoingRequestButton=(Button) itemView.findViewById(R.id.ongoingRequestButton);
             this.ongoingEditButton=(Button) itemView.findViewById(R.id.ongoingEditButton);
             this.ongoingCashButton=(Button) itemView.findViewById(R.id.ongoingCashButton);
@@ -116,6 +134,7 @@ public class OngoingOrderItemListAdapter extends RecyclerView.Adapter<RecyclerVi
             this.ongoingCancelButton=(Button) itemView.findViewById(R.id.ongoingCancelButton);
             this.cashcardlayout=itemView.findViewById(R.id.cashcardlayout);
             this.addEditLayout=itemView.findViewById(R.id.addEditLayout);
+            this.ongoingViewLayout=itemView.findViewById(R.id.ongoingViewLayout);
 
         }
     }

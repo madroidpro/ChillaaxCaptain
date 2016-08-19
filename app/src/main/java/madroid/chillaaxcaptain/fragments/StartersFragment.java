@@ -101,13 +101,13 @@ public class StartersFragment extends Fragment {
 
                 try {
                     RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-                    GridLayoutManager glm = new GridLayoutManager(getContext(), 2);
+                    GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
                     glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int position) {
                             switch(sectionAdapter.getSectionItemViewType(position)) {
                                 case SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER:
-                                    return 2;
+                                    return 3;
                                 default:
                                     return 1;
                             }
@@ -174,7 +174,8 @@ public class StartersFragment extends Fragment {
 
         @Override
         public void changeButtonState() {
-            int cnt=dbHelper.getRecordCount(TABLE_NAME);
+            int cnt=dbHelper.getRecordCount(TABLE_NAME,CONDITION_COLUMN,CONDITION_KEY);
+            Log.d("info_button",cnt+"");
             MenuItemsActivity menuItemsActivity=(MenuItemsActivity)ctx;
             if(cnt>0){
                 menuItemsActivity.submitSelectionButton.setVisibility(View.VISIBLE);

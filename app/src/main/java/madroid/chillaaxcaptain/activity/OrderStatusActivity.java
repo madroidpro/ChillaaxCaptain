@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +41,7 @@ public class OrderStatusActivity extends AppCompatActivity {
     public String TABLE_NAME="cart_items";
     public ProgressDialog pDialog;
     public static DatabaseHelper dbHelper;
+    private SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +58,15 @@ public class OrderStatusActivity extends AppCompatActivity {
         orderStatusRestaurantName.setText(RestaurantName+" "+RestaurantLocation+", Table No: "+RestaurantTableDisplayName);
         dbHelper=new DatabaseHelper(getApplicationContext());
         loadOrderedItems();
+        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.orderSwipeViewLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // onRefresh action here
+                swipeRefreshLayout.setRefreshing(true);
+                loadOrderedItems();
+            }
+        });
     }
 
     @Override
@@ -86,7 +97,7 @@ public class OrderStatusActivity extends AppCompatActivity {
         orderStatusCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alertMsg="Your request for order/item cancellation has been successfully submitted.Our staff will get in touch with you shortly!";
+                alertMsg=getResources().getString(R.string.OrderStatusAlertCancel);
                 raiseRequest(getResources().getString(R.string.cancelBill),getResources().getString(R.string.cancelPay));
             }
         });
@@ -110,7 +121,7 @@ public class OrderStatusActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //CASH SELECTED
                 raiseRequest(getResources().getString(R.string.requestBill),getResources().getString(R.string.cashPay));
-                alertMsg="Your request for bill has been submitted successfully, you will receive it shortly, Thanks! ";
+                alertMsg=getResources().getString(R.string.OrderStatusAlertPayment);
             }
         });
 
@@ -119,7 +130,7 @@ public class OrderStatusActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //CARD SELECTED
-                alertMsg="Your request for bill has been submitted successfully, you will receive it shortly, Thanks! ";
+                alertMsg=getResources().getString(R.string.OrderStatusAlertPayment);
                 raiseRequest(getResources().getString(R.string.requestBill),getResources().getString(R.string.cardPay));
             }
         });
@@ -136,6 +147,7 @@ public class OrderStatusActivity extends AppCompatActivity {
             public void onResponse(Call<OrderDetails> call, Response<OrderDetails> response) {
                // Log.d("info",response.body().getTable().getRestaurantOrder().get(0).getItems().getRestaurantOrderItem().get(0).getRestaurantMenuItemId());
                 pDialog.cancel();
+                swipeRefreshLayout.setRefreshing(false);
                 try{
                    int i=0;
                    final List<MyOrderItems>myOrderItemsList =new ArrayList<>();
@@ -193,6 +205,7 @@ public class OrderStatusActivity extends AppCompatActivity {
                         OrderDetailsItemAdapter orderDetailsItemAdapter = new OrderDetailsItemAdapter(myOrderItemsList,getApplicationContext());
                         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.orderStatusRecycler);
                         recyclerView.setNestedScrollingEnabled(false);
+                        orderDetailsItemAdapter.notifyDataSetChanged();
                         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         recyclerView.setAdapter(orderDetailsItemAdapter);
 
@@ -222,6 +235,7 @@ public class OrderStatusActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<OrderDetails> call, Throwable t) {
                 pDialog.cancel();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -274,7 +288,7 @@ public class OrderStatusActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
               alertdialog.cancel();
-                Intent intent = new Intent(getApplicationContext(),FeedbackActivity.class);
+                Intent intent = new Intent(getApplicationContext(),OpenTableActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
@@ -303,5 +317,15 @@ public class OrderStatusActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        // code here to show dialog
+        super.onBackPressed();  // optional depending on your needs
+        Intent intent = new Intent(getApplicationContext(),OpenTableActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

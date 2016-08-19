@@ -19,11 +19,16 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.2">
+                android:layout_weight="0.25"
+                android:orientation="vertical"
+                android:gravity="left"
+                android:layout_gravity="left">
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="left"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/scroll_img"
                     android:id="@+id/summeryItemImage"/>
             </LinearLayout>
 
@@ -31,7 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:layout_weight="0.8"
+                android:layout_weight="0.75"
                 android:layout_marginTop="6dp"
                 android:layout_marginLeft="10dp">
                 <TextView

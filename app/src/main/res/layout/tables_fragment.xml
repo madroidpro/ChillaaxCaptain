@@ -28,15 +28,21 @@
         android:text="SELECT TABLE TO ORDER"
         android:textColor="@color/black"
         android:textStyle="bold"/>
-    <GridView
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="8"
-        android:minHeight="500dp"
-        android:background="@color/colorAccent"
-        android:id="@+id/tableGrid"
-        android:numColumns="auto_fit"
-        android:columnWidth="150sp"
-        android:visibility="visible"
-        android:gravity="center"/>
+   <android.support.v4.widget.SwipeRefreshLayout
+       android:layout_width="fill_parent"
+       android:layout_height="0sp"
+       android:layout_weight="8"
+       android:id="@+id/swipeViewLayout"
+       android:layout_marginBottom="5sp">
+       <GridView
+           android:layout_width="fill_parent"
+           android:layout_height="match_parent"
+           android:minHeight="500dp"
+           android:background="@color/colorAccent"
+           android:id="@+id/tableGrid"
+           android:numColumns="auto_fit"
+           android:columnWidth="150sp"
+           android:visibility="visible"
+           android:gravity="center"/>
+   </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

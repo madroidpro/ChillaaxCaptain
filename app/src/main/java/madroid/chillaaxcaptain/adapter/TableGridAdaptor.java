@@ -16,6 +16,7 @@ import java.util.List;
 import madroid.chillaaxcaptain.R;
 import madroid.chillaaxcaptain.activity.MenuItemsActivity;
 import madroid.chillaaxcaptain.fragments.ShowTablesFragment;
+import madroid.chillaaxcaptain.helpers.DatabaseHelper;
 import madroid.chillaaxcaptain.helpers.SharedData;
 
 /**
@@ -27,11 +28,14 @@ public class TableGridAdaptor extends BaseAdapter {
     List<ShowTablesFragment.TableList> tableLists;
     LayoutInflater inflater;
     SharedData sd=SharedData.getSingletonObject();
+    DatabaseHelper dbHelper;
+    public static final String TABLE_NAME="cart_items";
 
     public TableGridAdaptor(Context ctx, List<ShowTablesFragment.TableList> tableLists) {
         this.ctx = ctx;
         this.tableLists = tableLists;
         this.inflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.dbHelper=new DatabaseHelper(ctx);
     }
 
     @Override
@@ -68,6 +72,7 @@ public class TableGridAdaptor extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 Log.d("ItemClicked",tableListItem.tableId);
+                dbHelper.clearTableData(TABLE_NAME);
                 Intent intent = new Intent(ctx, MenuItemsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("type",1);

@@ -1,9 +1,11 @@
 package madroid.chillaaxcaptain.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import java.util.List;
 import madroid.chillaaxcaptain.R;
 import madroid.chillaaxcaptain.activity.OpenTableActivity;
 import madroid.chillaaxcaptain.adapter.TableGridAdaptor;
+import madroid.chillaaxcaptain.helpers.DatabaseHelper;
 import madroid.chillaaxcaptain.helpers.SharedData;
 import madroid.chillaaxcaptain.model.OpenTables;
 import madroid.chillaaxcaptain.rest.ApiClient;
@@ -31,7 +34,9 @@ public class ShowTablesFragment extends Fragment {
     ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
     SharedData sd = SharedData.getSingletonObject();
     Context ctx =null;
+    private ProgressDialog pDialog;
     OpenTableActivity openactivity = null;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public ShowTablesFragment() {
     }
 
@@ -44,16 +49,29 @@ public class ShowTablesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-      final  View view = inflater.inflate(R.layout.tables_fragment,container,false);
+        final View view = inflater.inflate(R.layout.tables_fragment, container, false);
         getTables(view);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeViewLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // onRefresh action here
+                swipeRefreshLayout.setRefreshing(true);
+                getTables(view);
+            }
+        });
         return view;
     }
-
     private void getTables(final View view) {
+        pDialog = new ProgressDialog(ctx);
+        pDialog.setMessage("Please wait...");
+        pDialog.setCancelable(false);
+        pDialog.show();
         Call<OpenTables> call = apiInterface.login(sd.username,sd.password);
         call.enqueue(new Callback<OpenTables>() {
             @Override
             public void onResponse(Call<OpenTables> call, Response<OpenTables> response) {
+                pDialog.cancel();
                 int Tsize = response.body().getTables().size();
                 sd.setRestaurantId(response.body().getRestaurant().getId());
                 sd.setRestaurantName(response.body().getRestaurant().getName());
@@ -100,13 +118,16 @@ public class ShowTablesFragment extends Fragment {
                 }
                 TableGridAdaptor tableGridAdaptor = new TableGridAdaptor(ctx,tList);
                 GridView tableGrid = (GridView)view.findViewById(R.id.tableGrid);
+                tableGridAdaptor.notifyDataSetChanged();
                 tableGrid.setAdapter(tableGridAdaptor);
                 Log.d("info_tables",response.body().getTables().size()+"");
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(Call<OpenTables> call, Throwable t) {
                 Log.d("err_info",t.toString());
+                pDialog.cancel();
             }
         });
     }
