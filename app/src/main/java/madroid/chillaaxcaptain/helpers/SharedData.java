@@ -10,8 +10,8 @@ public class SharedData {
     public static final String username="1947BSK";
     public static final String password="BSKADMIN";
     //TODO change  to live url when releasing
-    //public static final String BaseUrl="http://www.chillaax.com/chillax-services/Services/";
-    public static final String BaseUrl="http://www.chillaax.in/Services/";
+    public static final String BaseUrl="http://www.chillaax.com/chillax-services/Services/";
+    //public static final String BaseUrl="http://www.chillaax.in/Services/";
     public static synchronized SharedData getSingletonObject(){
         if(singletonObject == null){
             return new SharedData();

@@ -144,7 +144,7 @@ public class OrderStatusActivity extends AppCompatActivity {
         Call<OrderDetails> call = apiInterface.stw_getTableById(RestaurantTableId);
         call.enqueue(new Callback<OrderDetails>() {
             @Override
-            public void onResponse(Call<OrderDetails> call, Response<OrderDetails> response) {
+            public void onResponse(Call<OrderDetails> call, final Response<OrderDetails> response) {
                // Log.d("info",response.body().getTable().getRestaurantOrder().get(0).getItems().getRestaurantOrderItem().get(0).getRestaurantMenuItemId());
                 pDialog.cancel();
                 swipeRefreshLayout.setRefreshing(false);
@@ -173,30 +173,41 @@ public class OrderStatusActivity extends AppCompatActivity {
 
                             }
                             final String orderItemStatus=ostatus;
-                            final String orderItemsetBill=response.body().getRestaurantOrder().get(i).getOriginalBill();
+                            final String orderItemsetBill=response.body().getRestaurantOrder().get(i).getPaidBill();
                             final String orderItemID="ID: "+RestaurantName+"RES"+response.body().getRestaurantOrder().get(i).getId();
                             // System.out.println(response.body().getRestaurantOrder().size());
                             final List<String>orderItemImages=new ArrayList<String>();
+                            final List<SubMenuItems>subMenuItemsList =new ArrayList<>();
                             //Iterator<RestaurantOrderItem> iterator =response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().listIterator();
                             int j=0;
                             int sizeJ=response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().size();
                             while(j<sizeJ){
                                 orderItemImages.add(response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().get(j).getRestaurantMenuItem().getItemImgSmall());
                                 System.out.println(response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().get(j).getRestaurantMenuItem().getItemImgSmall());
+
+                               final String iName=response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().get(j).getRestaurantMenuItem().getItemName();
+                               final String iQty=response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().get(j).getQuantity();
+                               final String iprice=response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().get(j).getTotalprice();
+                                subMenuItemsList.add(new SubMenuItems(){{
+                                    itemName=iName;
+                                    itemQty=iQty;
+                                    itemprice=iprice;
+                                }});
                                 j++;
                             }
                        /* while (response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().iterator().hasNext()){
                             orderItemImages.add(response.body().getRestaurantOrder().get(i).getItems().getRestaurantOrderItem().iterator().next().getRestaurantMenuItem().getItemImgSmall());
                             System.out.println("looping");
                         }*/
-                            myOrderItemsList.add(new MyOrderItems(){{
-                                oItemSetQty = orderItemSize;
-                                oItemStatusText=orderItemStatus;
-                                oItemSetPrice=orderItemsetBill;
-                                oItemSteward=orderItemSteward;
-                                oItemSetOrderId=orderItemID;
-                                oimageList=orderItemImages;
-                            }
+                                myOrderItemsList.add(new MyOrderItems(){{
+                                    oItemSetQty = orderItemSize;
+                                    oItemStatusText=orderItemStatus;
+                                    oItemSetPrice=orderItemsetBill;
+                                    oItemSteward=orderItemSteward;
+                                    oItemSetOrderId=orderItemID;
+                                    oimageList=orderItemImages;
+                                    subMenuItems=subMenuItemsList;
+                                }
                             });
                             // System.out.println( orderItemImages.size());
                             i++;
@@ -244,7 +255,12 @@ public class OrderStatusActivity extends AppCompatActivity {
            public int oItemSetQty;
            public String oItemSetPrice,oItemSteward,oItemSetOrderId,oItemStatusText;
           public List<String> oimageList;
+          public List<SubMenuItems> subMenuItems;
         }
+
+    public class SubMenuItems{
+       public String itemName,itemQty,itemprice;
+    }
 
 
     public void raiseRequest(String requestType,String paymentType){

@@ -14,7 +14,7 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper{
 
     // Database Version
-    public static final int DATABASE_VERSION=3;
+    public static final int DATABASE_VERSION=1;
 
     // Database name
     public static final String DATABASE_NAME="chillaax";
@@ -34,6 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String KEY_ITEM_PRICE = "item_price"; // 4
     public static final String KEY_ITEM_IMAGE = "item_image"; // 5
     public static final String KEY_ITEM_STATUS = "item_status"; // 6   0-added, 1-placed
+    public static final String KEY_ITEM_COMMENT = "item_comment"; // 7
 
 
     //Create Tables
@@ -44,7 +45,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             KEY_ITEM_Quantity + " VARCHAR ,"+
             KEY_ITEM_PRICE + " VARCHAR ,"+
             KEY_ITEM_IMAGE + " VARCHAR ,"+
-            KEY_ITEM_STATUS + " VARCHAR);";
+            KEY_ITEM_STATUS + " VARCHAR ,"+
+            KEY_ITEM_COMMENT + " VARCHAR);";
 
    //Creating DATABASE
     public DatabaseHelper(Context context) {
@@ -140,6 +142,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     return -1;
 
 
+    }
+
+    public Boolean updateTableRowData(String TableName,String key,String cColumn,String value){
+        SQLiteDatabase sd=this.getWritableDatabase();
+        ContentValues updatable_data =new ContentValues();
+        try{
+            updatable_data.put(cColumn,value);
+            sd.update(TableName,updatable_data,KEY_ITEM_ID+ "=" +key,null);
+//            String query="UPDATE "+TableName+" SET "+cColumn+" = "+value+" WHERE "+KEY_ITEM_ID+" = "+key;
+//            sd.execSQL(query);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 
     public boolean  updateAllTableData(String TableName,String cCoulmn,String value){

@@ -48,6 +48,7 @@ public class SummaryActivity extends AppCompatActivity {
     public List<String> itemIdsList= new ArrayList<>();
     public List<String> quantitiesList=new ArrayList<>();
     public List<String> itemPriceList=new ArrayList<>();
+    public List<String> itemCommentList=new ArrayList<>();
     final List<Summary>summaryList=new ArrayList<>();
     public static String RestaurantName,RestaurantId,RestaurantTableId,RestaurantLocation,BrandServiceTax,BrandServiceCharge,BrandVat,Swachbarath,Krishikalyan,RestaurantTableDisplayName;
    final ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
@@ -87,6 +88,7 @@ public class SummaryActivity extends AppCompatActivity {
                 itemIdsList.add(resultSet.getString(1));
                 quantitiesList.add(resultSet.getString(3));
                 itemPriceList.add(resultSet.getString(4));
+                itemCommentList.add(resultSet.getString(7));
                 //end
 
                 summaryList.add(new Summary(){{
@@ -141,8 +143,8 @@ public class SummaryActivity extends AppCompatActivity {
                     pDialog.setMessage("Please wait...");
                     pDialog.setCancelable(false);
                     pDialog.show();
-                   // Log.d("infopost",baseCost+"-"+"-"+serviceTax+""+totalCost+"-"+VAT);
-                    Call<PlaceOrder>call = apiInterface.placeOrder(RestaurantTableId,baseCost+"",totalCost+"",Math.floor(serviceTax)+"",Math.floor(serviceCharge)+"",Math.floor(VAT)+"",Math.floor(krishiKalyanTax)+"",Math.floor(swatchBharathTax)+"",android.text.TextUtils.join(",", itemIdsList),android.text.TextUtils.join(",", quantitiesList),android.text.TextUtils.join(",",itemPriceList),"");
+                   Log.d("info_post",android.text.TextUtils.join("|",itemCommentList));
+                    Call<PlaceOrder>call = apiInterface.placeOrder(RestaurantTableId,baseCost+"",totalCost+"",Math.floor(serviceTax)+"",Math.floor(serviceCharge)+"",Math.floor(VAT)+"",Math.floor(krishiKalyanTax)+"",Math.floor(swatchBharathTax)+"",android.text.TextUtils.join(",", itemIdsList),android.text.TextUtils.join(",", quantitiesList),android.text.TextUtils.join(",",itemPriceList),android.text.TextUtils.join("|",itemCommentList));
                     call.enqueue(new Callback<PlaceOrder>() {
                         @Override
                         public void onResponse(Call<PlaceOrder> call, Response<PlaceOrder> response) {

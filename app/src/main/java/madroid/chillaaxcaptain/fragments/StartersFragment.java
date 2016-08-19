@@ -1,5 +1,6 @@
 package madroid.chillaaxcaptain.fragments;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,10 +11,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,7 +57,9 @@ public class StartersFragment extends Fragment {
     public DatabaseHelper dbHelper=null;
     public static final String TABLE_NAME="cart_items";
     public static final String CONDITION_COLUMN="item_status";
+    public static final String CONDITION_COLUMN_COMMENT="item_comment";
     public static final String CONDITION_KEY="0";
+    private ProgressDialog pDialog;
     public StartersFragment(){
 
     }
@@ -76,6 +83,10 @@ public class StartersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
        final View view = inflater.inflate(R.layout.starter_fragment, container, false);
+        pDialog=new ProgressDialog(ctx);
+        pDialog.setMessage("Please wait..");
+        pDialog.setCancelable(false);
+        pDialog.show();
         sectionAdapter = new SectionedRecyclerViewAdapter();
         Call<List<GetItem>>itemcall= apiInterface.getItems(sd.getRestaurantId(),type);
         itemcall.enqueue(new Callback<List<GetItem>>() {
@@ -115,16 +126,18 @@ public class StartersFragment extends Fragment {
                     });
                     recyclerView.setLayoutManager(glm);
                     recyclerView.setAdapter(sectionAdapter);
+                    pDialog.cancel();
 
                 }catch (Exception e){
                     Log.d("err",e.toString());
+                    pDialog.cancel();
                 }
 
             }
 
             @Override
             public void onFailure(Call<List<GetItem>> call, Throwable t) {
-
+                pDialog.cancel();
             }
         });
 
@@ -213,6 +226,7 @@ public class StartersFragment extends Fragment {
             cart_data.put("item_price",sMenuItemPrice);
             cart_data.put("item_image",sMenuImg);
             cart_data.put("item_status",0);
+            cart_data.put("item_comment","N/A");
 
             itemHolder.menuItemName.setText(sMenuItemName);
             itemHolder.menuItemDesc.setText(sMenuItemDesc);
@@ -226,14 +240,17 @@ public class StartersFragment extends Fragment {
                 itemHolder.menuItemPrice.setText(getString(R.string.rs)+price);
                 itemHolder.menuItemAddButton.setText("Item Added");
                 itemHolder.menuItemAddButton.setBackground(getResources().getDrawable(R.drawable.button_style_green));
+                itemHolder.menuItemNamesLayout.setVisibility(View.GONE);
                 itemHolder.subMenuSubLayout.setVisibility(View.VISIBLE);
                 itemHolder.menuItemQty.setText("Qty "+qty);
+                itemHolder.menuItemEditComment.setText(resultSet.getString(7));
                 Log.d("price",price+"");
             }catch (Exception e){
                 Log.d("err",e.toString());
                 itemHolder.menuItemAddButton.setText("Add Item");
                 itemHolder.menuItemAddButton.setBackground(getResources().getDrawable(R.drawable.button_style));
                 itemHolder.subMenuSubLayout.setVisibility(View.GONE);
+                itemHolder.menuItemNamesLayout.setVisibility(View.VISIBLE);
                 dbHelper.removeTableData(TABLE_NAME,"item_id",sMenuItemId);
                 itemHolder.menuItemPrice.setText(getString(R.string.rs)+sMenuItemPrice);
             }
@@ -249,6 +266,7 @@ public class StartersFragment extends Fragment {
                 public void onClick(View v) {
                     itemHolder.menuItemAddButton.setText("Item Added");
                     itemHolder.menuItemAddButton.setBackground(getResources().getDrawable(R.drawable.button_style_green));
+                    itemHolder.menuItemNamesLayout.setVisibility(View.GONE);
                     itemHolder.subMenuSubLayout.setVisibility(View.VISIBLE);
                     itemHolder.menuItemQty.setText("Qty "+1);
                     dbHelper.insertTableData(TABLE_NAME,cart_data);
@@ -264,12 +282,30 @@ public class StartersFragment extends Fragment {
                     itemHolder.menuItemAddButton.setText("Add Item");
                     itemHolder.menuItemAddButton.setBackground(getResources().getDrawable(R.drawable.button_style));
                     itemHolder.subMenuSubLayout.setVisibility(View.GONE);
+                    itemHolder.menuItemNamesLayout.setVisibility(View.VISIBLE);
                     dbHelper.removeTableData(TABLE_NAME,"item_id",sMenuItemId);
                     int price=Integer.parseInt(sMenuItemPrice);
                     itemHolder.menuItemPrice.setText(getString(R.string.rs)+price);
                     changeButtonState();
                 }
             });
+
+
+            itemHolder.menuItemEditComment.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        Log.d("info_comment",""+itemHolder.menuItemEditComment.getText());
+                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        if(itemHolder.menuItemEditComment.getText().length()>0)
+                        dbHelper.updateTableRowData(TABLE_NAME,sMenuItemId,CONDITION_COLUMN_COMMENT,itemHolder.menuItemEditComment.getText().toString());
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
             //sub increase quantity
             itemHolder.menuItemAddQuantity.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -337,7 +373,8 @@ public class StartersFragment extends Fragment {
         private final ImageView menuItemImg;
         private final TextView menuItemPrice,menuItemName,menuItemDesc,menuItemQty;
         private final Button menuItemAddButton,menuItemRemoveButton,menuItemRemoveQuantity,menuItemAddQuantity;
-        private final View subMenuSubLayout;
+        private final View subMenuSubLayout,menuItemNamesLayout;
+        private final EditText menuItemEditComment;
 
         public ItemViewHolder(View view) {
             super(view);
@@ -347,9 +384,11 @@ public class StartersFragment extends Fragment {
             menuItemPrice = (TextView) view.findViewById(R.id.menuItemPrice);
             menuItemName = (TextView) view.findViewById(R.id.menuItemName);
             menuItemDesc = (TextView) view.findViewById(R.id.menuItemDesc);
+            menuItemEditComment = (EditText) view.findViewById(R.id.menuItemEditComment);
             menuItemQty=(TextView) view.findViewById(R.id.menuItemQty);
             menuItemAddButton=(Button)view.findViewById(R.id.menuItemAddButton);
             subMenuSubLayout=view.findViewById(R.id.subMenuSubLayout);
+            menuItemNamesLayout=view.findViewById(R.id.menuItemNamesLayout);
             menuItemRemoveButton=(Button)view.findViewById(R.id.menuItemRemoveButton);
             menuItemRemoveQuantity=(Button)view.findViewById(R.id.menuItemRemoveQuantity);
             menuItemAddQuantity=(Button)view.findViewById(R.id.menuItemAddQuantity);
