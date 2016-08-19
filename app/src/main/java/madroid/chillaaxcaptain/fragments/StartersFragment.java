@@ -93,12 +93,20 @@ public class StartersFragment extends Fragment {
             @Override
             public void onResponse(Call<List<GetItem>> call, Response<List<GetItem>> response) {
              int i=0;
+                int hd=0;
                 try {
                     while(response.body().get(i)!= null){
-                        Log.d("response",response.body().get(i).getRestaurantMenuItemGroup().getName()+"");
+                       // Log.d("response",response.body().get(i).getRestaurantMenuItemGroup().getName()+"");
                         String hImg=response.body().get(i).getRestaurantMenuItemGroup().getGroupImg();
                         String hTxt=response.body().get(i).getRestaurantMenuItemGroup().getName();
                         List<RestaurantMenuItem>itemList=response.body().get(i).getRestaurantMenuItem();
+                        if(i == 0)
+                            hd=0;
+                        else{
+                            hd+=response.body().get(i-1).getRestaurantMenuItem().size();
+
+                        }
+                        System.out.println("Headers--"+hTxt+"--"+(hd));
                         sectionAdapter.addSection(new MenuItemSection(hImg,hTxt,itemList));
 //                        Iterator<RestaurantMenuItem>iterator=response.body().get(i).getRestaurantMenuItem().iterator();
 //                        while(iterator.hasNext()){
@@ -118,6 +126,7 @@ public class StartersFragment extends Fragment {
                         public int getSpanSize(int position) {
                             switch(sectionAdapter.getSectionItemViewType(position)) {
                                 case SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER:
+                                    System.out.println("Headers--"+position);
                                     return 3;
                                 default:
                                     return 1;
@@ -127,6 +136,7 @@ public class StartersFragment extends Fragment {
                     recyclerView.setLayoutManager(glm);
                     recyclerView.setAdapter(sectionAdapter);
                     pDialog.cancel();
+                    recyclerView.scrollToPosition(42+4);
 
                 }catch (Exception e){
                     Log.d("err",e.toString());
