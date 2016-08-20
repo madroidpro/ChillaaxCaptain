@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,9 +21,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
@@ -88,12 +94,13 @@ public class StartersFragment extends Fragment {
         pDialog.setCancelable(false);
         pDialog.show();
         sectionAdapter = new SectionedRecyclerViewAdapter();
-        Call<List<GetItem>>itemcall= apiInterface.getItems(sd.getRestaurantId(),type);
+        final Call<List<GetItem>>itemcall= apiInterface.getItems(sd.getRestaurantId(),type);
         itemcall.enqueue(new Callback<List<GetItem>>() {
             @Override
             public void onResponse(Call<List<GetItem>> call, Response<List<GetItem>> response) {
              int i=0;
                 int hd=0;
+                Map<String,Integer> headers=new LinkedHashMap<>();
                 try {
                     while(response.body().get(i)!= null){
                        // Log.d("response",response.body().get(i).getRestaurantMenuItemGroup().getName()+"");
@@ -101,17 +108,13 @@ public class StartersFragment extends Fragment {
                         String hTxt=response.body().get(i).getRestaurantMenuItemGroup().getName();
                         List<RestaurantMenuItem>itemList=response.body().get(i).getRestaurantMenuItem();
                         if(i == 0)
-                            hd=0;
+                            hd=1;
                         else{
                             hd+=response.body().get(i-1).getRestaurantMenuItem().size();
 
                         }
-                        System.out.println("Headers--"+hTxt+"--"+(hd));
+                        headers.put(hTxt,hd+4);
                         sectionAdapter.addSection(new MenuItemSection(hImg,hTxt,itemList));
-//                        Iterator<RestaurantMenuItem>iterator=response.body().get(i).getRestaurantMenuItem().iterator();
-//                        while(iterator.hasNext()){
-//                            Log.d("responseitems",iterator.next().getItemName()+"");
-//                        }
                         i++;
                     }
                 }catch (Exception e){
@@ -119,14 +122,13 @@ public class StartersFragment extends Fragment {
                 }
 
                 try {
-                    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+                    final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
                     GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
                     glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int position) {
                             switch(sectionAdapter.getSectionItemViewType(position)) {
                                 case SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER:
-                                    System.out.println("Headers--"+position);
                                     return 3;
                                 default:
                                     return 1;
@@ -136,7 +138,25 @@ public class StartersFragment extends Fragment {
                     recyclerView.setLayoutManager(glm);
                     recyclerView.setAdapter(sectionAdapter);
                     pDialog.cancel();
-                    recyclerView.scrollToPosition(42+4);
+                    FloatingActionsMenu rightLabels = (FloatingActionsMenu) view.findViewById(R.id.fab);
+                    Iterator iterator = headers.entrySet().iterator();
+                    while (iterator.hasNext()){
+                       final Map.Entry pair= (Map.Entry) iterator.next();
+                        String name= (String) pair.getKey();
+                        FloatingActionButton headerButton = new FloatingActionButton(ctx);
+                        headerButton.setTitle(name);
+                        headerButton.setSize(FloatingActionButton.SIZE_MINI);
+                        headerButton.setColorNormal(getResources().getColor(R.color.colorPrimary));
+                        headerButton.setColorPressed(getResources().getColor(R.color.colorPrimaryDark));
+                        headerButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                recyclerView.scrollToPosition((int)pair.getValue());
+                            }
+                        });
+                        rightLabels.addButton(headerButton);
+                    }
+
 
                 }catch (Exception e){
                     Log.d("err",e.toString());
