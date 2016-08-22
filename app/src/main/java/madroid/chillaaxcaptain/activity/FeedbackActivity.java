@@ -2,6 +2,7 @@ package madroid.chillaaxcaptain.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -175,7 +176,9 @@ public class FeedbackActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 alertdialog.cancel();
-                finish();
+                Intent intent = new Intent(getApplicationContext(),OpenTableActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 

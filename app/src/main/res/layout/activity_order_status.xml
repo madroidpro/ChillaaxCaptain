@@ -93,12 +93,14 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_marginTop="5dp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+            android:paddingRight="10dp"
+            android:weightSum="1">
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
             android:layout_height="wrap_content"
             android:maxHeight="45dp"
             android:textSize="@dimen/title_text_extra_small"
@@ -107,6 +109,18 @@
             android:background="@drawable/button_style"
             android:text="Raise For Cancellation "
             android:textAllCaps="false"/>
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content"
+                android:maxHeight="45dp"
+                android:textSize="@dimen/title_text_extra_small"
+                android:id="@+id/orderStatusFeedback"
+                android:textColor="@color/colorAccent"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/button_style"
+                android:text="Request Feedback"
+                android:textAllCaps="false"/>
         </LinearLayout>
     </LinearLayout>
 

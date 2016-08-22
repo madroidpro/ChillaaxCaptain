@@ -134,6 +134,15 @@ public class OrderStatusActivity extends AppCompatActivity {
                 raiseRequest(getResources().getString(R.string.requestBill),getResources().getString(R.string.cardPay));
             }
         });
+
+        Button orderStatusFeedback=(Button)findViewById(R.id.orderStatusFeedback);
+        orderStatusFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),FeedbackActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void loadOrderedItems(){

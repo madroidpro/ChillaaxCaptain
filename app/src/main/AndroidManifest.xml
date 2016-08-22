@@ -29,7 +29,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.RestaurantActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="locked" />
         <activity android:name=".activity.MenuItemsActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.SummaryActivity"
