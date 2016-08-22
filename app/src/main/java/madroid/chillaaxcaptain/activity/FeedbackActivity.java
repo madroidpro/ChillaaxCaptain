@@ -145,8 +145,8 @@ public class FeedbackActivity extends AppCompatActivity {
                 pDialog.cancel();
                 AlertMsg=getResources().getString(R.string.alertMsgFeedback);
                 //Clearing all data..  we don't want no data of yours
-                SharedPreferences settings = getSharedPreferences(sd.Flaglists,MODE_PRIVATE);
-                settings.edit().clear().commit();
+//                SharedPreferences settings = getSharedPreferences(sd.Flaglists,MODE_PRIVATE);
+//                settings.edit().clear().commit();
                 openDialog(new View(getApplicationContext()),AlertMsg);
             }
 

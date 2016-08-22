@@ -113,7 +113,7 @@ public class StartersFragment extends Fragment {
                             hd+=response.body().get(i-1).getRestaurantMenuItem().size();
 
                         }
-                        headers.put(hTxt,hd+4);
+                        headers.put(hTxt,hd+3);
                         sectionAdapter.addSection(new MenuItemSection(hImg,hTxt,itemList));
                         i++;
                     }
@@ -123,7 +123,7 @@ public class StartersFragment extends Fragment {
 
                 try {
                     final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-                    GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
+                    final GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
                     glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int position) {
@@ -151,7 +151,8 @@ public class StartersFragment extends Fragment {
                         headerButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                recyclerView.scrollToPosition((int)pair.getValue());
+                                glm.scrollToPositionWithOffset((int)pair.getValue(),0);
+                               // recyclerView.smoothScrollToPosition((int)pair.getValue());
                             }
                         });
                         rightLabels.addButton(headerButton);

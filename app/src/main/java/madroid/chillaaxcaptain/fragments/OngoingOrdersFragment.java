@@ -125,6 +125,7 @@ public class OngoingOrdersFragment extends Fragment {
 
             @Override
             public void onFailure(Call<OpenTables> call, Throwable t) {
+                Log.d("err",t+"");
                 pDialog.cancel();
             }
         });

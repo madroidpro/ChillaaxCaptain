@@ -74,6 +74,7 @@ public class OngoingOrderItemListAdapter extends RecyclerView.Adapter<RecyclerVi
                 SharedPreferences.Editor editor=ctx.getSharedPreferences(sd.Flaglists,ctx.MODE_PRIVATE).edit();
                 editor.putString("RestaurantTableId",ongoingOrderItem.tableId);
                 editor.putString("RestaurantTableDisplayName",ongoingOrderItem.tableNo);
+                editor.putString("mainOrderId",ongoingOrderItem.orderId);
                 editor.commit();
                 Intent intent=new Intent(ctx, OrderStatusActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -87,6 +88,7 @@ public class OngoingOrderItemListAdapter extends RecyclerView.Adapter<RecyclerVi
                 SharedPreferences.Editor editor=ctx.getSharedPreferences(sd.Flaglists,ctx.MODE_PRIVATE).edit();
                 editor.putString("RestaurantTableId",ongoingOrderItem.tableId);
                 editor.putString("RestaurantTableDisplayName",ongoingOrderItem.tableNo);
+                editor.putString("mainOrderId",ongoingOrderItem.orderId);
                 editor.commit();
                 Intent intent=new Intent(ctx, OrderStatusActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
