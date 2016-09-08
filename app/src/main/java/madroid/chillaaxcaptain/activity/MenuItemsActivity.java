@@ -1,5 +1,6 @@
 package madroid.chillaaxcaptain.activity;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,10 +16,19 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -29,7 +39,7 @@ import madroid.chillaaxcaptain.R;
 import madroid.chillaaxcaptain.fragments.StartersFragment;
 import madroid.chillaaxcaptain.helpers.SharedData;
 
-public class MenuItemsActivity extends AppCompatActivity {
+public class MenuItemsActivity extends AppCompatActivity{
 
    SharedData sd =SharedData.getSingletonObject();
     private TabLayout tabLayout;
@@ -43,6 +53,7 @@ public class MenuItemsActivity extends AppCompatActivity {
     private Snackbar snackbar;
     private CoordinatorLayout coordinatorLayout;
     private boolean internetConnected=true;
+    ViewPagerAdapter adapter=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +85,44 @@ public class MenuItemsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        //MenuItem searchItem = ;
+       final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_item));
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+//                Log.d("info_q",query);
+//                StartersFragment fragment = (StartersFragment) adapter.getCurrentFragment();
+//               // StartersFragment startersFragment = (StartersFragment) getSupportFragmentManager().findFragmentById(R.id.viewpager);
+//                fragment.searchItem(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+              //  Log.d("info_q",newText);
+                StartersFragment fragment = (StartersFragment) adapter.getCurrentFragment();
+                // StartersFragment startersFragment = (StartersFragment) getSupportFragmentManager().findFragmentById(R.id.viewpager);
+
+                if (TextUtils.isEmpty(newText)){
+                    //Text is cleared, do your thing
+                    fragment.closeSearch();
+                }else{
+                    fragment.searchItem(newText);
+                }
+
+                return false;
+            }
+        });
+        return true;
+    }
+
+
+    @Override
     protected void onStart() {
         super.onStart();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -98,7 +147,7 @@ public class MenuItemsActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager){
-      ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter= new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new StartersFragment(), "Starter","1");
         adapter.addFragment(new StartersFragment(), "Main Course","2");
         adapter.addFragment(new StartersFragment(), "Desserts","3");
@@ -108,17 +157,33 @@ public class MenuItemsActivity extends AppCompatActivity {
         viewPager.setCurrentItem(gridMenuType-1);
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
-
+        private Fragment mCurrentFragment;
         public ViewPagerAdapter(FragmentManager manager) {
             super(manager);
         }
 
+        public Fragment getCurrentFragment() {
+            return mCurrentFragment;
+        }
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            if (getCurrentFragment() != object) {
+                mCurrentFragment = ((Fragment) object);
+            }
+            super.setPrimaryItem(container, position, object);
+        }
         @Override
         public Fragment getItem(int position) {
             return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
 
         @Override

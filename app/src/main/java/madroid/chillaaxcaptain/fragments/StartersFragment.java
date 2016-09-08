@@ -25,8 +25,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,10 +54,13 @@ public class StartersFragment extends Fragment {
         public void changeButtonState();
     }
 
-    private SectionedRecyclerViewAdapter sectionAdapter;
+    private  SectionedRecyclerViewAdapter sectionAdapter;
+    public static Response<List<GetItem>> response_original=null;
     ApiInterface apiInterface= ApiClient.getClient().create(ApiInterface.class);
     SharedData sd=SharedData.getSingletonObject();
     public Context ctx=null;
+    View view=null;
+    RecyclerView recyclerView=null;
     public String type="1";
     public DatabaseHelper dbHelper=null;
     public static final String TABLE_NAME="cart_items";
@@ -87,121 +89,180 @@ public class StartersFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("info_stat","paused");
+    }
+
+    public void searchItem(String query){
+        String headerImg="na.jpg";
+        String headerText="Results";
+        List<RestaurantMenuItem> list = new ArrayList<>();
+        if(response_original != null){
+                int len=response_original.body().size();
+            Log.d("info_qu",len+"");
+                for(int i=0;i<len;i++){
+                    List<RestaurantMenuItem>itemList=response_original.body().get(i).getRestaurantMenuItem();
+                    for(int j=0;j<itemList.size();j++){
+                        if (itemList.get(j).getItemName().toLowerCase().contains(query)){
+                            RestaurantMenuItem item = new RestaurantMenuItem();
+                            item.setItemName(itemList.get(j).getItemName());
+                            item.setDescription(itemList.get(j).getDescription());
+                            item.setItemPrice(itemList.get(j).getItemPrice());
+                            item.setItemImgSmall(itemList.get(j).getItemImgSmall());
+                            item.setId(itemList.get(j).getId());
+                            list.add(item);
+                            //Log.d("info_matc",itemList.get(j).getItemName().toString());
+                        }
+                    }
+            }
+            sectionAdapter.removeAllSections();
+            sectionAdapter.addSection(new MenuItemSection(headerImg,headerText,list));
+            final GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
+            glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    switch(sectionAdapter.getSectionItemViewType(position)) {
+                        case SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER:
+                            return 3;
+                        default:
+                            return 1;
+                    }
+                }
+            });
+
+            recyclerView.setLayoutManager(glm);
+            recyclerView.setAdapter(sectionAdapter);
+            sectionAdapter.notifyDataSetChanged();
+
+        }
+    }
+
+    public void closeSearch(){
+
+        if(response_original!= null){
+            renderRecycle(response_original,view);
+            Log.d("info_close","closed");
+        }
+
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       final View view = inflater.inflate(R.layout.starter_fragment, container, false);
-        pDialog=new ProgressDialog(ctx);
-        pDialog.setMessage("Please wait..");
-        pDialog.setCancelable(false);
-        pDialog.show();
+        view = inflater.inflate(R.layout.starter_fragment, container, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         sectionAdapter = new SectionedRecyclerViewAdapter();
-        final Call<List<GetItem>>itemcall= apiInterface.getItems(sd.getRestaurantId(),type);
-        itemcall.enqueue(new Callback<List<GetItem>>() {
-            @Override
-            public void onResponse(Call<List<GetItem>> call, Response<List<GetItem>> response) {
-             int i=0;
-                int hd=0;
-                Map<String,Integer> headers=new LinkedHashMap<>();
-                try {
-                    while(response.body().get(i)!= null){
-                       // Log.d("response",response.body().get(i).getRestaurantMenuItemGroup().getName()+"");
-                        String hImg=response.body().get(i).getRestaurantMenuItemGroup().getGroupImg();
-                        String hTxt=response.body().get(i).getRestaurantMenuItemGroup().getName();
-                        List<RestaurantMenuItem>itemList=response.body().get(i).getRestaurantMenuItem();
-                        if(i == 0)
-                            hd=1;
-                        else{
-                            hd+=response.body().get(i-1).getRestaurantMenuItem().size();
-
-                        }
-                        headers.put(hTxt,hd+3);
-                        sectionAdapter.addSection(new MenuItemSection(hImg,hTxt,itemList));
-                        i++;
-                    }
-                }catch (Exception e){
-                    Log.d("responseitems","End Reached!");
-                }
-
-                try {
-                    final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-                    final GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
-                    glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                        @Override
-                        public int getSpanSize(int position) {
-                            switch(sectionAdapter.getSectionItemViewType(position)) {
-                                case SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER:
-                                    return 3;
-                                default:
-                                    return 1;
-                            }
-                        }
-                    });
-                    recyclerView.setLayoutManager(glm);
-                    recyclerView.setAdapter(sectionAdapter);
-                    pDialog.cancel();
-                    FloatingActionsMenu rightLabels = (FloatingActionsMenu) view.findViewById(R.id.fab);
-                    Iterator iterator = headers.entrySet().iterator();
-                    while (iterator.hasNext()){
-                       final Map.Entry pair= (Map.Entry) iterator.next();
-                        String name= (String) pair.getKey();
-                        FloatingActionButton headerButton = new FloatingActionButton(ctx);
-                        headerButton.setTitle(name);
-                        headerButton.setSize(FloatingActionButton.SIZE_MINI);
-                        headerButton.setColorNormal(getResources().getColor(R.color.colorPrimary));
-                        headerButton.setColorPressed(getResources().getColor(R.color.colorPrimaryDark));
-                        headerButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                glm.scrollToPositionWithOffset((int)pair.getValue(),0);
-                               // recyclerView.smoothScrollToPosition((int)pair.getValue());
-                            }
-                        });
-                        rightLabels.addButton(headerButton);
-                    }
-
-
-                }catch (Exception e){
-                    Log.d("err",e.toString());
-                    pDialog.cancel();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<GetItem>> call, Throwable t) {
-                pDialog.cancel();
-            }
-        });
-
-
-
-
-
         return view;
+    }
+
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            pDialog=new ProgressDialog(ctx);
+            pDialog.setMessage("Please wait..");
+            pDialog.setCancelable(false);
+            pDialog.show();
+            final Call<List<GetItem>>itemcall= apiInterface.getItems(sd.getRestaurantId(),type);
+            itemcall.enqueue(new Callback<List<GetItem>>() {
+                @Override
+                public void onResponse(Call<List<GetItem>> call, Response<List<GetItem>> response) {
+                    renderRecycle(response,view);
+                     pDialog.cancel();
+
+                }
+
+                @Override
+                public void onFailure(Call<List<GetItem>> call, Throwable t) {
+                    pDialog.cancel();
+                }
+            });
+        }
+    }
+
+
+    public void renderRecycle(Response<List<GetItem>> response,View view){
+        response_original=response;
+
+        int i=0;
+        int hd=0;
+        Map<String,Integer> headers=new LinkedHashMap<>();
+        sectionAdapter.removeAllSections();
+        try {
+            int bodylength=response.body().size();
+            Log.d("info_len",bodylength+"");
+            while(response.body().get(i)!= null){
+                // Log.d("response",response.body().get(i).getRestaurantMenuItemGroup().getName()+"");
+                String hImg=response.body().get(i).getRestaurantMenuItemGroup().getGroupImg();
+                String hTxt=response.body().get(i).getRestaurantMenuItemGroup().getName();
+                List<RestaurantMenuItem>itemList=response.body().get(i).getRestaurantMenuItem();
+                if(i == 0)
+                    hd=1;
+                else{
+                    hd+=response.body().get(i-1).getRestaurantMenuItem().size();
+
+                }
+                headers.put(hTxt,hd+3);
+                sectionAdapter.addSection(new MenuItemSection(hImg,hTxt,itemList));
+                i++;
+            }
+        }catch (Exception e){
+            Log.d("info_response","End Reached!");
+        }
+
+        try {
+            final GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
+            glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    switch(sectionAdapter.getSectionItemViewType(position)) {
+                        case SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER:
+                            return 3;
+                        default:
+                            return 1;
+                    }
+                }
+            });
+            recyclerView.setLayoutManager(glm);
+            recyclerView.setAdapter(sectionAdapter);
+            sectionAdapter.notifyDataSetChanged();
+            pDialog.cancel();
+            FloatingActionsMenu rightLabels = (FloatingActionsMenu) view.findViewById(R.id.fab);
+            Iterator iterator = headers.entrySet().iterator();
+            while (iterator.hasNext()){
+                final Map.Entry pair= (Map.Entry) iterator.next();
+                String name= (String) pair.getKey();
+                FloatingActionButton headerButton = new FloatingActionButton(ctx);
+                headerButton.setTitle(name);
+                headerButton.setSize(FloatingActionButton.SIZE_MINI);
+                headerButton.setColorNormal(getResources().getColor(R.color.colorPrimary));
+                headerButton.setColorPressed(getResources().getColor(R.color.colorPrimaryDark));
+                headerButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        glm.scrollToPositionWithOffset((int)pair.getValue(),0);
+                        // recyclerView.smoothScrollToPosition((int)pair.getValue());
+                    }
+                });
+                rightLabels.addButton(headerButton);
+            }
+
+
+        }catch (Exception e){
+            Log.d("err",e.toString());
+            pDialog.cancel();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-
+        Log.d("info_status","resume");
 //        if (getActivity() instanceof AppCompatActivity) {
 //            AppCompatActivity activity = ((AppCompatActivity) getActivity());
 //            if (activity.getSupportActionBar() != null)
 //                activity.getSupportActionBar().setTitle(R.string.nav_example1);
 //        }
     }
-
-    /*private List<String> getContactsWithLetter(char letter) {
-        List<String> contacts = new ArrayList<>();
-
-        for (String contact : getResources().getStringArray(R.array.names)) {
-            if (contact.charAt(0) == letter) {
-                contacts.add(contact);
-            }
-        }
-
-        return contacts;
-    }*/
 
     class MenuItemSection extends StatelessSection implements displayButton {
 
