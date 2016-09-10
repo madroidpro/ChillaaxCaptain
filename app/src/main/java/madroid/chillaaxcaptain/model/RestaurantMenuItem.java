@@ -12,6 +12,9 @@ public class RestaurantMenuItem {
     @SerializedName("item_name")
     @Expose
     private String itemName;
+    @SerializedName("display_no")
+    @Expose
+    private String displayNumber;
     @SerializedName("restaurant_id")
     @Expose
     private String restaurantId;
@@ -93,6 +96,16 @@ public class RestaurantMenuItem {
      * @return
      *     The restaurantId
      */
+
+    public String getDisplayNumber() {
+        return displayNumber;
+    }
+
+    public void setDisplayNumber(String displayNumber) {
+        this.displayNumber = displayNumber;
+    }
+
+
     public String getRestaurantId() {
         return restaurantId;
     }

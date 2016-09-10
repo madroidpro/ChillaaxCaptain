@@ -104,7 +104,7 @@ public class StartersFragment extends Fragment {
                 for(int i=0;i<len;i++){
                     List<RestaurantMenuItem>itemList=response_original.body().get(i).getRestaurantMenuItem();
                     for(int j=0;j<itemList.size();j++){
-                        if (itemList.get(j).getItemName().toLowerCase().contains(query)){
+                        if (itemList.get(j).getItemName().toLowerCase().contains(query) || itemList.get(j).getDisplayNumber().equals(query)){
                             RestaurantMenuItem item = new RestaurantMenuItem();
                             item.setItemName(itemList.get(j).getItemName());
                             item.setDescription(itemList.get(j).getDescription());
